@@ -67,7 +67,6 @@ export const initializeDatabase = async (): Promise<void> => {
     CREATE TABLE IF NOT EXISTS events (
       id SERIAL PRIMARY KEY,
       type TEXT NOT NULL,
-      count INTEGER NOT NULL,
       created_at TIMESTAMP DEFAULT NOW()
     )
   `);

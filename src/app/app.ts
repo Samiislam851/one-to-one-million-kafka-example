@@ -2,8 +2,6 @@ import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
 import routes from './routes';
-import { errorHandler } from '../common/middlewares/error-handler';
-import { notFoundHandler } from '../common/middlewares/not-found';
 
 const app = express();
 
@@ -19,9 +17,6 @@ app.get('/', (_req, res) => {
   });
 });
 
-app.use('/api/v1', routes);
-
-app.use(notFoundHandler);
-app.use(errorHandler);
+app.use('', routes);
 
 export default app;
