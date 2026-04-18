@@ -3,8 +3,9 @@ import { query } from "../../db/postgres";
 
 export const addClickV1 = async (req: Request, res : Response) =>{
     try {
+        console.log(req.body);
         await query(`INSERT INTO events (type) Values ($1) RETURNING *`,
-            ['click']
+            [req?.body?.type]
         )
         res.send({
             success: true,
