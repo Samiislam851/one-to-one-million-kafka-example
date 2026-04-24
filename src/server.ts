@@ -1,11 +1,13 @@
 import app from './app/app';
 import { env } from './config/env';
 import { ensureDatabaseConnection, initializeDatabase, pool } from './db/postgres';
+import { ensureRedisConnection, redisClient } from './db/redis';
 
 const startServer = async (): Promise<void> => {
   try {
     await ensureDatabaseConnection();
     await initializeDatabase();
+    await ensureRedisConnection();
 
     app.listen(env.PORT, () => {
       // Keep startup log concise for container logs.
@@ -17,11 +19,17 @@ const startServer = async (): Promise<void> => {
   }
 };
 
+const shutdown = async (): Promise<void> => {
+  await Promise.allSettled([pool.end(), redisClient.quit()]);
+  process.exit(0);
+};
+
 process.on('SIGINT', () => {
-  void (async () => {
-    await pool.end();
-    process.exit(0);
-  })();
+  void shutdown();
+});
+
+process.on('SIGTERM', () => {
+  void shutdown();
 });
 
 void startServer();

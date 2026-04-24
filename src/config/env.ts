@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const requiredEnvVars = ['DATABASE_URL'] as const;
+const requiredEnvVars = ['DATABASE_URL', 'REDIS_URL'] as const;
 
 for (const key of requiredEnvVars) {
   if (!process.env[key]) {
@@ -28,4 +28,5 @@ export const env = {
   NODE_ENV: process.env.NODE_ENV ?? 'development',
   PORT: parsePort(process.env.PORT),
   DATABASE_URL: process.env.DATABASE_URL as string,
+  REDIS_URL: process.env.REDIS_URL as string,
 };
