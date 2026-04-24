@@ -70,4 +70,16 @@ export const initializeDatabase = async (): Promise<void> => {
       created_at TIMESTAMP DEFAULT NOW()
     )
   `);
+  await query(`
+    CREATE TABLE IF NOT EXISTS counts (
+      id INTEGER PRIMARY KEY DEFAULT 1 CHECK (id = 1),
+      type TEXT NOT NULL UNIQUE,
+      count BIGINT NOT NULL DEFAULT 0
+    )
+  `);
+//insert only if click type is not already present in the database
+  await query(`
+    INSERT INTO counts (id, type, count)
+    VALUES (1, 'click', 0) ON CONFLICT (type) DO NOTHING
+  `);
 };

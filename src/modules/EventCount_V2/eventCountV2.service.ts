@@ -17,15 +17,17 @@ export const addClickV2 = async (req: Request, res: Response) =>{
         // but we are going to use transaction over here to ensure data consistency
         
         await query("BEGIN");
-        const clickCount = await query(`UPDATE click_counts SET clicks = clicks + 1 RETURNING *`,[])
-        console.log("🚀 ~ addClickV2 ~ clickCount:", clickCount?.rows[0]?.clicks);
+        const clickCount = await query(
+            `UPDATE counts SET count = count + 1 WHERE type = $1 RETURNING *`,
+            [req.body.type || 'click']
+        )
         await query(`INSERT INTO events (type) Values ($1) RETURNING *`,[req.body.type || 'click'])
         await query("COMMIT");
         //if adding event fails rollback the click count
         return res.status(200).send({
             success: true,
             message: "Click added successfully",
-            clickCount: clickCount?.rows[0]?.clicks
+            clickCount: clickCount?.rows[0]?.count
         })
     } catch (error) {
         await query("ROLLBACK");
@@ -39,11 +41,10 @@ export const addClickV2 = async (req: Request, res: Response) =>{
 
 export const countClickV2 = async (req: Request, res: Response) =>{
     try {
-        const clickCount = await query(`SELECT clicks FROM click_counts`,[])
-        console.log("🚀 ~ countClickV2 ~ clickCount:", clickCount);
+        const clickCount = await query(`SELECT count FROM counts WHERE type = $1`,[req.body.type || 'click'])
         return res.status(200).send({
             success: true,
-            clicks: parseInt(clickCount?.rows[0]?.clicks)
+            clicks: parseInt(clickCount?.rows[0]?.count)
         })
     } catch (error) {
         return res.status(500).send({
