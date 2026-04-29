@@ -20,6 +20,7 @@
   "private": true,
   "dependencies": {
     "cors": "^2.8.6",
+    "cron": "^4.4.0",
     "dotenv": "^17.4.2",
     "express": "^4.22.1",
     "helmet": "^8.1.0",
